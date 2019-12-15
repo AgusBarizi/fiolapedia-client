@@ -22,11 +22,11 @@ const Product = ({product}) => {
     <>
       {product ? (
         <Card className="product">
-            <ButtonBase className="card-button" component={Link} to={`/product/${product.id}`}>
+            <ButtonBase className="card-button" component={Link} to={`/product/${product._id}`}>
                 <CardMedia
                     // style={{ height: 0, paddingTop: "56.25%" }}
                     style={{ height: 0, paddingTop: "100%" }}
-                    image={product.image}
+                    image={product.description}
                     title={product.title}
                 />
 
@@ -46,7 +46,7 @@ const Product = ({product}) => {
                         component="p"
                         color="textSecondary"
                     >
-                        `Tersisa ${product.stock} buah`
+                        Tersisa {product.qty} buah
                     </Typography>
                 </CardContent>
 
@@ -64,7 +64,7 @@ const Product = ({product}) => {
                                 color="error"
                                 component="p"
                                 >
-                                `Rp. ${product.price}`
+                                Rp. {product.price}
                             </Typography>
                         </Grid>
                         {/* <Grid kitem xs={6} sm={6} lg={6} xl={6} align="right">

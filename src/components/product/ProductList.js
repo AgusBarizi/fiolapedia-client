@@ -1,5 +1,5 @@
 import React from 'react'
-import {Grid, TextField, } from '@material-ui/core'
+import {Grid, TextField, Typography, } from '@material-ui/core'
 import Product from './Product'
 
 const ProductList =({products})=>{
@@ -49,7 +49,7 @@ const ProductList =({products})=>{
 
     return(
         <>
-            {products ? (
+            {products && products.length>0? (
                 <>
                     <Grid container justify="flex-start" style={{paddingTop:24, paddingLeft:24, paddingRight:24}}>
                         {products.map(product=>(
@@ -59,7 +59,7 @@ const ProductList =({products})=>{
                         ))}
                     </Grid>
                 </>
-            ) : "No Products Found" }
+            ) : <Typography component="p" variant="p" style={{paddingTop:24}}>- Produk tidak ditemukan -</Typography> }
         </>
     )
     

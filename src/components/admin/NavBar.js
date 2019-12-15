@@ -18,7 +18,7 @@ import KeyboardArrowDownIcon from "@material-ui/icons/KeyboardArrowDown";
 import HistoryIcon from "@material-ui/icons/History";
 import { Link, Redirect } from "react-router-dom";
 import { useHistory } from "react-router";
-import logo from "../fiolapedia-icon.png";
+import logo from "../../fiolapedia-icon.png";
 import AccountCircleIcon from '@material-ui/icons/AccountCircle'
 import axios from 'axios';
 
@@ -100,8 +100,6 @@ const NavBar = ({ keywordString }) => {
     ? JSON.parse(window.localStorage.getItem("userData"))
     : null;
 
-    // console.info(userData)
-
   const classes = useStyles();
   let history = useHistory();
   
@@ -155,62 +153,19 @@ const NavBar = ({ keywordString }) => {
               {/* <img src="https://cf.shopee.co.id/file/70ac9f78ea99da5ae911985a3cce4958" height={50}/> */}
             </Typography>
             <div className={classes.grow} />
-
-            {/* <div className={classes.sectionDesktop}>
-
-              <Button
-                color="inherit"
-                className={classes.button}
-                >
-                Kategori <KeyboardArrowDownIcon />
-              </Button>
-              
-            </div> */}
-            <div style={{ width: "100%" }}>
-              <div className={classes.search}>
-                <div className={classes.searchIcon}>
-                  <SearchIcon />
-                </div>
-                <InputBase
-                  onKeyPress={searchHandler}
-                  onChange={e => setKeyword(e.target.value)}
-                  placeholder="Cari Buku Disini..."
-                  value={keyword}
-                  classes={{
-                    root: classes.inputRoot,
-                    input: classes.inputInput
-                  }}
-                  inputProps={{ "aria-label": "search" }}
-                />
-              </div>
-            </div>
-
             <div className={classes.sectionDesktop}>
-              <IconButton
-                aria-label="show 4 new mails"
-                color="inherit"
-                component={Link}
-                to="/shopping_cart"
-              >
-                <Badge badgeContent={0} color="secondary">
-                  <ShoppingCartIcon />
-                </Badge>
-              </IconButton>
+                 <Button color="inherit" component={Link} to="/admin/users">
+                    User
+                  </Button>
 
-              <IconButton aria-label="Riwayat Transaksi" color="inherit">
-                <Badge badgeContent={0} color="secondary">
-                  <HistoryIcon />
-                </Badge>
-              </IconButton>
+                  <Button color="inherit" component={Link} to="/admin/products">
+                    Product
+                  </Button>
 
-              {/* <IconButton
-edge="end"
-aria-label="account of current user"
-aria-haspopup="true"
-color="inherit"
->
-<AccountCircle />
-</IconButton> */}
+                  <Button color="inherit" component={Link} to="/admin/transactions">
+                    Transaction
+                  </Button>
+
               {!userData ? (
                 <>
                   <Button color="inherit" component={Link} to="/login">

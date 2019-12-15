@@ -7,8 +7,7 @@ import Button from '@material-ui/core/Button'
 import CssBaseline from '@material-ui/core/CssBaseline'
 import TextField from '@material-ui/core/TextField'
 import Snackbar from '@material-ui/core/Snackbar'
-// import FormControlLabel from '@material-ui/core/FormControlLabel'
-// import Checkbox from '@material-ui/core/Checkbox'
+// import Link from '@material-ui/core/Link'
 import Grid from '@material-ui/core/Grid'
 import Box from '@material-ui/core/Box'
 import LockOutlinedIcon from '@material-ui/icons/LockOutlined'
@@ -51,11 +50,12 @@ const useStyles = makeStyles(theme => ({
   },
 }));
 
-export default function LoginPage() {
+export default function RegisterPage() {
   const classes = useStyles();
   let history = useHistory()
 
   const [email, setEmail] = useState('')
+  const [name, setName] = useState('')
   const [password, setPassword] = useState('')
   const [message, setMessage] = useState('hello')
   const [showMessage, setShowMessage] = useState(false)
@@ -71,23 +71,28 @@ export default function LoginPage() {
     setMessage('')
   }
 
-  const loginHandler = async (e) => {
+  const registerHandler = async (e) => {
     e.preventDefault();
     hideMessageBox()
+
+    if(!email || !name || !password){
+      showMessageBox("Please fill in the data correctly")
+      return
+    }
     
-    // const loginUrl = 'http://lararest.cloudappsolution.com/api/00000/login';
-    const loginUrl = 'http://localhost:3000/login';
+    const registerUrl = 'http://localhost:3000/register';
+    
     let response
     try{
-      response = await axios.post(loginUrl, {email, password});
-      // console.info(response)
-      if(response.status==200){
+      response = await axios.post(registerUrl, {name, email, password});
+      console.info(response)
 
+      if(response.status==201){
         const userData = response.data
         window.localStorage.setItem('userData', JSON.stringify(userData))
         history.push('/')
       }else{
-        showMessageBox('Login failed')
+        showMessageBox('Failed to register user')
       }
     }catch(err){
       console.error(err);
@@ -115,10 +120,23 @@ export default function LoginPage() {
         </Avatar>
 
         <Typography component="h1" variant="h5">
-          Sign in
+          Register
         </Typography>
 
         <form className={classes.form} noValidate>
+
+        <TextField
+            variant="outlined"
+            margin="normal"
+            required
+            fullWidth
+            id="name"
+            label="Name"
+            name="name"
+            autoComplete="name"
+            onChange={e=>setName(e.target.value)}
+            autoFocus
+          />
           
           <TextField
             variant="outlined"
@@ -146,11 +164,6 @@ export default function LoginPage() {
             autoComplete="current-password"
           />
 
-          {/* <FormControlLabel
-            control={<Checkbox value="remember" color="primary" />}
-            label="Remember me"
-          /> */}
-
           <Button
             // type="submit"
             type="button"
@@ -158,9 +171,9 @@ export default function LoginPage() {
             variant="contained"
             color="primary"
             className={classes.submit}
-            onClick={loginHandler}
+            onClick={registerHandler}
           >
-            Sign In
+            Register
           </Button>
 
           <Grid container>
@@ -171,8 +184,8 @@ export default function LoginPage() {
             </Grid> */}
 
             <Grid item align="right">
-              <Link to="/register">
-                {"Don't have an account? Sign Up"}
+              <Link to="/login">
+                {"Have an account? Sign In here"}
               </Link>
             </Grid>
           </Grid>

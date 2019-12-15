@@ -1,37 +1,40 @@
-import React,{useEffect, useState} from 'react'
-// import NavBar from './';
-import axios from 'axios'
+import React, {useState, useEffect} from 'react'
+import {Container, Typography, Grid, Select,FormControl, InputLabel} from '@material-ui/core'
 import NavBar from '../components/NavBar'
 import ProductList from '../components/product/ProductList'
-// import BannerCarousel from './components/BannerCarousel'
-// import SingleLineGridList from './components/SingleLineGridList'
-import {Container, Grid, Paper, List, ListItem, ListItemText, Typography} from '@material-ui/core'
-// import ClippedDrawer from './components/ClippedDrawer'
-import FilterCategory from '../components/product/FilterCategory'
+import axios from 'axios' 
+import FilterCategory from '../components/product/FilterCategory';
 
 
-const HomePage =()=>{
+  
 
+
+const SearchResultPage = ({match})=>{
+
+    // const [state , setState] = useState({
+    //     filteredProducts : null,
+    //     products:null,
+    //     categorySelected:'Semua Kategori'
+    // })
+    
     const [products, setProducts] = useState(null)
     const [filteredProducts, setFilteredProducts] = useState(null)
     const [categorySelected, setCategorySelected] = useState('Semua Kategori')
-
-    const userData = window.localStorage.getItem("userData")
-    ? JSON.parse(window.localStorage.getItem("userData"))
-    : null;
-
     
-    axios.defaults.headers = {
-        'Content-Type': 'application/json',
-        Authorization: userData ? userData.token : '',
-    }
-
+    const keyword = match.params.keyword
+  
+    
     const fecthProducts = ()=>{
-        const url = 'http://localhost:3000/books'
+        const url = `http://localhost:3000/books?keyword=${keyword}`
         axios.get(url).then((res)=>{
             if(res.status==200){
                 setProducts(res.data.books)
                 setFilteredProducts(res.data.books)
+                // setState(prevState=>({
+                //     ...prevState,
+                //     products:res.data.data,
+                //     filteredProducts:res.data.data,
+                // }))
             }
         }).catch((err)=>{
             console.error(err)
@@ -39,6 +42,7 @@ const HomePage =()=>{
     }
 
     const onCategoryChange = (e)=>{
+        console.log(`changed ${e.target.value}`)
         const filter = e.target.value
         setCategorySelected(filter)
         setFilteredProducts(
@@ -51,24 +55,17 @@ const HomePage =()=>{
 
     useEffect(()=>{
         fecthProducts()
-    },[])
+    },[keyword])
 
     return(
         <>
-            <NavBar/>
+            <NavBar keywordString={decodeURIComponent(keyword)}/>
             <div style={{paddingTop:85}}></div>
             <Container>
-                {/* <Grid container style={{marginLeft:24}}>
-                    <Grid item>
-                        <Typography>
-                            Semua Produk 
-                        </Typography>
-                    </Grid>
-                    </Grid> */}
                 <Grid container style={{paddingLeft:24, paddingRight:24}} justify="space-between">
                     <Grid item xs={6}>
                         <Typography align="left" component="h3" variant="h5" style={{paddingTop:18}}>
-                            Semua Produk
+                            Hasil Pencarian : {keyword}
                         </Typography>
                     </Grid>
 
@@ -82,4 +79,4 @@ const HomePage =()=>{
     )
 }
 
-export default HomePage
+export default SearchResultPage

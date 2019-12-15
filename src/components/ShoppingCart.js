@@ -1,4 +1,4 @@
-import React from 'react'
+import React, {useState, useEffect} from 'react'
 import { makeStyles } from '@material-ui/core/styles';
 import Table from '@material-ui/core/Table';
 import TableBody from '@material-ui/core/TableBody';
@@ -6,7 +6,9 @@ import TableCell from '@material-ui/core/TableCell';
 import TableHead from '@material-ui/core/TableHead';
 import TableRow from '@material-ui/core/TableRow';
 import Paper from '@material-ui/core/Paper';
-import {Avatar, Typography} from '@material-ui/core'
+import {Avatar, Typography, IconButton,Grid, AlertDialog, Button} from '@material-ui/core'
+import DeleteIcon from '@material-ui/icons/Delete'
+import axios from 'axios';
 
 const useStyles = makeStyles({
     root: {
@@ -18,49 +20,98 @@ const useStyles = makeStyles({
     },
   });
   
-  function createData(name, calories, fat, carbs, protein) {
-    return { name, calories, fat, carbs, protein };
-  }
-  
-  const rows = [
-    createData('Frozen yoghurt', 159, 6.0, 24, 4.0),
-    createData('Ice cream sandwich', 237, 9.0, 37, 4.3),
-    createData('Eclair', 262, 16.0, 24, 6.0),
-    createData('Cupcake', 305, 3.7, 67, 4.3),
-    createData('Gingerbread', 356, 16.0, 49, 3.9),
-  ];
-  
   
   
 
-const ShoppingCart = ({cartItems})=>{
+const ShoppingCart = ()=>{
+
+    const classes = useStyles();
+    
+
+    const [showAlertDialog, setShowAlertDialog] = useState(false)
+    const [cartItems, setCartItems] = useState(null)
+    const [totalPrice, setTotalPrice] = useState(0)
+    const [transaction, setTransaction] = useState(null)
+    let total = 0
+
+
+    const userData = window.localStorage.getItem("userData")
+    ? JSON.parse(window.localStorage.getItem("userData"))
+    : null;
 
     
-    const classes = useStyles();
-
-    function createData(name, code, population, size) {
-        const density = population / size;
-        return { name, code, population, size, density };
+    axios.defaults.headers = {
+        'Content-Type': 'application/json',
+        Authorization: userData ? userData.token : '',
     }
 
-    const rows = [
-        createData('India', 'IN', 1324171354, 3287263),
-        createData('China', 'CN', 1403500365, 9596961),
-        createData('Italy', 'IT', 60483973, 301340),
-        createData('United States', 'US', 327167434, 9833520),
-        createData('Canada', 'CA', 37602103, 9984670),
-        createData('Australia', 'AU', 25475400, 7692024),
-        createData('Germany', 'DE', 83019200, 357578),
-        createData('Ireland', 'IE', 4857000, 70273),
-        createData('Mexico', 'MX', 126577691, 1972550),
-        createData('Japan', 'JP', 126317000, 377973),
-        createData('France', 'FR', 67022000, 640679),
-        createData('United Kingdom', 'GB', 67545757, 242495),
-        createData('Russia', 'RU', 146793744, 17098246),
-        createData('Nigeria', 'NG', 200962417, 923768),
-        createData('Brazil', 'BR', 210147125, 8515767),
-      ];
+    
 
+    const fetchShoppingCart = ()=>{
+        // console.info(props)
+        const user_id = 1
+        const url = `http://localhost/lararest/public/api/00000/cart/get_items?user_id=${user_id}`
+        axios.get(url).then((res)=>{
+            console.info(res)
+            if(res.status==200){
+                setTransaction(res.data.trans)
+
+                
+                
+            }
+        }).catch((err)=>{
+            console.log(err)
+        })
+    }
+
+    const fetchTransactionOpen = ()=>{
+        const url = `http://localhost:3000/transaction/open`
+        axios.get(url).then((res)=>{
+            console.info(res)
+            if(res.status==200){
+                console.log('sukses 200')
+                setTransaction(res.data.trans)
+            }
+        }).catch((err)=>{
+            fetchOpenCart()
+            console.log('error')
+            console.log(err)
+        })
+    }
+
+    const fetchOpenCart = ()=>{
+        const user_id = userData ? userData.user._id : ''
+        const url = `http://localhost:3000/transaction/open`
+        axios.post(url, {user_id}).then((res)=>{
+            console.info(res)
+            if(res.status==200){
+                // setTransactionId(res.data)
+                fetchTransactionOpen()
+            }
+        }).catch((err)=>{
+            console.log(err)
+        })
+    }
+
+
+
+    const deleteCartItemHandler = (cartItemId)=>{
+        if(window.confirm('Apakah Anda Yakin mau menghapus barang ini dari keranjang')){
+            const url = 'http://localhost/lararest/public/api/00000/cart/delete_item'
+            axios.post(url, {id:cartItemId}).then((res)=>{
+                if(res.status==200){
+                    fetchShoppingCart()
+                }
+            }).catch((err)=>{
+                alert('Oops.. Terjadi Kesalahan')
+            })
+        }
+        
+    }
+
+    useEffect(()=>{
+        fetchTransactionOpen()
+    },[])
 
     console.log(cartItems)
     return(
@@ -82,32 +133,54 @@ const ShoppingCart = ({cartItems})=>{
                     </TableRow>
                     </TableHead>
                     <TableBody>
-                        {cartItems? ( 
-                            cartItems.map((item,index) => (
-                                <TableRow key={index}>
-                                <TableCell component="th" scope="row">
-                                    {++index}
-                                </TableCell>
-                                <TableCell align="left">
-                                    <Avatar style={{verticalAlign:'middle', display:'inline-block'}} alt="Img" src={item.get_product.image} />
-                                    <p style={{verticalAlign:'middle', margin:'unset', paddingLeft:10, display:'inline-block'}}>{item.get_product.title}</p>
-                                </TableCell>
-                                <TableCell align="center">{item.qty}</TableCell>
-                                <TableCell align="right">{item.price}</TableCell>
-                                <TableCell align="right">{item.sub_total}</TableCell>
-                                <TableCell align="right"></TableCell>
+                        {transaction && transaction.items.length>0? ( 
+                            transaction.items.map((item,index) => {
+                                // setTotalPrice(100)
+                                total+=item.subtotal
+                                console.log('a')
+                                return (
+                                <TableRow key={item._id}>
+                                    <TableCell component="th" scope="row">
+                                        {++index}
+                                    </TableCell>
+                                    <TableCell align="left">
+                                        {/* <Avatar style={{verticalAlign:'middle', display:'inline-block'}} alt="Img" src={item.get_product.image} /> */}
+                                        <p style={{verticalAlign:'middle', margin:'unset', paddingLeft:10, display:'inline-block'}}>{item.title}</p>
+                                    </TableCell>
+                                    <TableCell align="center">{item.qty}</TableCell>
+                                    <TableCell align="right">{item.price}</TableCell>
+                                    <TableCell align="right">{item.subtotal}</TableCell>
+                                    <TableCell align="right">
+                                        <IconButton aria-label="delete" className={classes.margin} onClick={()=>deleteCartItemHandler(item._id)}>
+                                            <DeleteIcon fontSize="small" />
+                                        </IconButton>
+                                    </TableCell>
                                 </TableRow>
-                            ))
+                                )
+                            })
+                            
                         ):(
                             <TableRow key={'0'}>
                                 <TableCell component="th" colspan={6} scope="row">Keranjang Belanja Masih Kosong</TableCell>
                             </TableRow>
                             
                         )}
+                        <TableRow>
+                                <TableCell colSpan={4}>Total</TableCell>
+                                <TableCell align="right">{total}</TableCell>
+                                <TableCell align="right"></TableCell>
+                            </TableRow>
                     </TableBody>
                 </Table>
-            </Paper>
 
+            </Paper>
+            <Grid container justify="right">
+                <Grid item align="right"><Button style={{marginTop:24}} variant="contained" color="primary">Checkout</Button></Grid>
+            </Grid>
+            
+
+
+            {/* <AlertDialog title="Hapus Item"  description="Apakah Anda yakin menghapus barang ini dari keranjang?" onConfirm={console.log('confirm')} /> */}
         </>
     )
 }
