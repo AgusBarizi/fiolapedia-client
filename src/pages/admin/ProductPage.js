@@ -31,6 +31,7 @@ const useStyles = makeStyles({
 const ProductPage = () => {
   const classes = useStyles();
   
+  
   let history = useHistory()
   const userData = window.localStorage.getItem("userData")
   ? JSON.parse(window.localStorage.getItem("userData"))
@@ -82,6 +83,10 @@ const ProductPage = () => {
         >
           Products
         </Typography>
+
+        <Grid container justify="right">
+            <Grid item align="right"><Button onClick="" style={{marginTop:24}} variant="contained" color="primary">Add Product</Button></Grid>
+        </Grid>
 
         <Paper className={classes.root}>
           <Table className={classes.table} aria-label="simple table">

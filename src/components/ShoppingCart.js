@@ -105,6 +105,20 @@ const ShoppingCart = ()=>{
 
 
 
+    // const deleteCartItemHandler = (cartItemId)=>{
+    //     if(window.confirm('Apakah Anda Yakin mau menghapus barang ini dari keranjang')){
+    //         const url = 'http://localhost/lararest/public/api/00000/cart/delete_item'
+    //         axios.post(url, {id:cartItemId}).then((res)=>{
+    //             if(res.status==200){
+    //                 fetchShoppingCart()
+    //             }
+    //         }).catch((err)=>{
+    //             alert('Oops.. Terjadi Kesalahan')
+    //         })
+    //     }
+        
+    // }
+
     useEffect(()=>{
         fetchTransactionOpen()
     },[])
@@ -147,7 +161,7 @@ const ShoppingCart = ()=>{
                                     <TableCell align="right">{item.price}</TableCell>
                                     <TableCell align="right">{item.subtotal}</TableCell>
                                     <TableCell align="right">
-                                        <IconButton aria-label="delete" className={classes.margin} onClick={()=>deleteCartItemHandler(item._id)}>
+                                        <IconButton aria-label="delete" className={classes.margin} onClick="">
                                             <DeleteIcon fontSize="small" />
                                         </IconButton>
                                     </TableCell>
