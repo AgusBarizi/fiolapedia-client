@@ -59,20 +59,20 @@ const ShoppingCart = ()=>{
         })
     }
 
-    const fetchShoppingCart = ()=>{
-        // console.info(props)
-        const user_id = 1
-        const url = `http://localhost/lararest/public/api/00000/cart/get_items?user_id=${user_id}`
-        axios.get(url).then((res)=>{
-            console.info(res)
-            if(res.status==200){
-                setTransaction(res.data.trans)
+    // const fetchShoppingCart = ()=>{
+    //     // console.info(props)
+    //     const user_id = 1
+    //     const url = `http://localhost/lararest/public/api/00000/cart/get_items?user_id=${user_id}`
+    //     axios.get(url).then((res)=>{
+    //         console.info(res)
+    //         if(res.status==200){
+    //             setTransaction(res.data.trans)
                 
-            }
-        }).catch((err)=>{
-            console.log(err)
-        })
-    }
+    //         }
+    //     }).catch((err)=>{
+    //         console.log(err)
+    //     })
+    // }
 
     const fetchTransactionOpen = ()=>{
         const url = `http://localhost:3000/transaction/open`
@@ -104,20 +104,6 @@ const ShoppingCart = ()=>{
     }
 
 
-
-    const deleteCartItemHandler = (cartItemId)=>{
-        if(window.confirm('Apakah Anda Yakin mau menghapus barang ini dari keranjang')){
-            const url = 'http://localhost/lararest/public/api/00000/cart/delete_item'
-            axios.post(url, {id:cartItemId}).then((res)=>{
-                if(res.status==200){
-                    fetchShoppingCart()
-                }
-            }).catch((err)=>{
-                alert('Oops.. Terjadi Kesalahan')
-            })
-        }
-        
-    }
 
     useEffect(()=>{
         fetchTransactionOpen()
