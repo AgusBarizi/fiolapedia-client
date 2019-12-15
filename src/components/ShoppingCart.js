@@ -45,7 +45,19 @@ const ShoppingCart = ()=>{
         Authorization: userData ? userData.token : '',
     }
 
-    
+    const checkoutHandler=()=>{
+        const trid = transaction._id
+        const url = `http://localhost:3000/transaction/${trid}`
+        axios.patch(url, {status:'CLOSED'}).then((res)=>{
+            console.info(res)
+            if(res.status==200){
+                alert('Checkout Success')
+                fetchTransactionOpen()
+            }
+        }).catch((err)=>{
+            console.log(err)
+        })
+    }
 
     const fetchShoppingCart = ()=>{
         // console.info(props)
@@ -55,8 +67,6 @@ const ShoppingCart = ()=>{
             console.info(res)
             if(res.status==200){
                 setTransaction(res.data.trans)
-
-                
                 
             }
         }).catch((err)=>{
@@ -174,9 +184,15 @@ const ShoppingCart = ()=>{
                 </Table>
 
             </Paper>
-            <Grid container justify="right">
-                <Grid item align="right"><Button style={{marginTop:24}} variant="contained" color="primary">Checkout</Button></Grid>
-            </Grid>
+
+            {
+                transaction && transaction.items.length  ? (
+                    <Grid container justify="right">
+                        <Grid item align="right"><Button onClick={checkoutHandler} style={{marginTop:24}} variant="contained" color="primary">Checkout</Button></Grid>
+                    </Grid>
+                ):null
+            }
+
             
 
 
